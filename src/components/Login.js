@@ -7,14 +7,14 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
-import { useNavigate } from "react-router-dom";
+
 import { useDispatch } from "react-redux";
 import { AddUser } from "../utils/userSlice";
 
 const Login = () => {
   const [isSigIn, setIsSignIn] = useState(true);
   const [ismessage, setIsMessage] = useState("");
-  const navigate = useNavigate();
+  
   const dispacth = useDispatch();
   const email = useRef(null);
   const password = useRef(null);
@@ -62,7 +62,7 @@ const Login = () => {
               // ...
             });
 
-          navigate("/browse");
+          
           //console.log(user);
           // ...
         })
@@ -81,7 +81,7 @@ const Login = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          navigate("/browse");
+          
           // ...
         })
         .catch((error) => {

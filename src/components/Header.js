@@ -1,23 +1,45 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ButtonToolbar } from "react-bootstrap";
 import { auth } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
-import { signOut } from "firebase/auth";
-import { useSelector } from "react-redux";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { AddUser, RemoveUser } from "../utils/userSlice";
 
 const Header = () => {
   const navigate = useNavigate();
   const user = useSelector((store) => store.user);
+  const dispacth = useDispatch();
 
   const handleSignOut = () => {
     signOut(auth)
-      .then(() => {
-        navigate("/");
-      })
+      .then(() => {})
       .catch((error) => {
         // An error happened.
       });
   };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const { uid, email, displayname, photoURL } = user;
+        dispacth(
+          AddUser({
+            uid: uid,
+            email: email,
+            displayname: displayname,
+            photoURL: photoURL,
+          })
+        );
+        navigate("/browse");
+      } else {
+        dispacth(RemoveUser());
+        navigate("/");
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
   return (
     <div className="absolute px-8 py-2 bg-gradient-to-b from-black w-full z-10 flex justify-between">
       <img
